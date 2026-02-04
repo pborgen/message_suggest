@@ -6,12 +6,18 @@ iMessage extension + backend for reply suggestions.
 - `services/backend/` – Express server that calls OpenAI and returns JSON suggestions
 - `apps/ios/` – iMessage extension code snippet (UIKit) + integration notes
 
-## Quick Start (backend)
+## Workspace (pnpm + turbo)
+```bash
+pnpm install
+pnpm dev
+```
+
+## Quick Start (backend only)
 ```bash
 cd services/backend
 cp .env.example .env
-npm install
-npm run dev
+pnpm install
+pnpm dev
 ```
 
 ## iOS

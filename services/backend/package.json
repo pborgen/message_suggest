@@ -1,11 +1,13 @@
 {
-  "name": "message-suggest-backend",
+  "name": "@message-suggest/backend",
   "version": "0.1.0",
   "type": "module",
   "private": true,
   "scripts": {
     "dev": "node --env-file=.env server.js",
-    "start": "node --env-file=.env server.js"
+    "start": "node --env-file=.env server.js",
+    "build": "echo 'no build step'",
+    "lint": "echo 'no lint step'"
   },
   "dependencies": {
     "express": "^4.19.2",
