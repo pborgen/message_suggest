@@ -20,5 +20,10 @@ pnpm install
 pnpm dev
 ```
 
+### Provider switch
+Set in `services/backend/.env`:
+- `MODEL_PROVIDER=openai` (default)
+- `MODEL_PROVIDER=hf` (Hugging Face Inference API)
+
 ## iOS
 Open Xcode → New Project → App → include Messages Extension, then replace `MessagesViewController.swift` with the file in `apps/ios/`.
