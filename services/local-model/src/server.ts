@@ -12,8 +12,33 @@ const RequestSchema = z.object({
   temperature: z.number().optional()
 });
 
-// Placeholder implementation. Swap this out with your local GPU inference.
-function generateFromPrompt(prompt: string) {
+async function generateFromPrompt(prompt: string) {
+  const engine = (process.env.LOCAL_ENGINE || "llamacpp").toLowerCase();
+
+  if (engine === "llamacpp") {
+    const LLAMACPP_URL = process.env.LLAMACPP_URL || "http://localhost:8081/completion";
+
+    const resp = await fetch(LLAMACPP_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        prompt,
+        n_predict: 300,
+        temperature: 0.7,
+        stop: ["\n\n"]
+      })
+    });
+
+    if (!resp.ok) {
+      const errText = await resp.text();
+      throw new Error(`llama.cpp error: ${resp.status} ${errText}`);
+    }
+
+    const data = await resp.json();
+    return data.content ?? data.text ?? "";
+  }
+
+  // Fallback mock
   const json = {
     short: ["Sounds good", "Yep", "Let’s do it"],
     long: "Sounds good to me—let’s go with that plan."
@@ -26,15 +51,20 @@ app.get("/health", (_req, res) => {
   res.json({ status: "ok" });
 });
 
-app.post("/generate", (req, res) => {
+app.post("/generate", async (req, res) => {
   const parsed = RequestSchema.safeParse(req.body);
   if (!parsed.success) {
     return res.status(400).json({ error: "Invalid request" });
   }
 
-  const { prompt } = parsed.data;
-  const generated_text = generateFromPrompt(prompt);
-  return res.json({ generated_text });
+  try {
+    const { prompt } = parsed.data;
+    const generated_text = await generateFromPrompt(prompt);
+    return res.json({ generated_text });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ error: "Local model error" });
+  }
 });
 
 app.listen(PORT, () => {
