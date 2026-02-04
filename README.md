@@ -4,6 +4,7 @@ iMessage extension + backend for reply suggestions.
 
 ## Structure
 - `services/backend/` – Express server that calls OpenAI and returns JSON suggestions
+- `services/local-model/` – Local `/generate` endpoint stub for GPU inference
 - `apps/ios/` – iMessage extension code snippet (UIKit) + integration notes
 
 ## Workspace (pnpm + turbo)
