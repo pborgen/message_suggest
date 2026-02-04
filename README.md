@@ -24,6 +24,8 @@ pnpm dev
 Set in `services/backend/.env`:
 - `MODEL_PROVIDER=openai` (default)
 - `MODEL_PROVIDER=hf` (Hugging Face Inference API)
+- `MODEL_PROVIDER=local` (your own GPU endpoint)
+- `MODEL_PROVIDER=mock` (tests)
 
 ### Health + tests
 - `GET /health` returns status + provider

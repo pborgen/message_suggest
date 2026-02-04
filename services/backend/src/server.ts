@@ -80,6 +80,35 @@ async function generateWithHuggingFace(text: string, tone: string) {
   return JSON.parse(raw);
 }
 
+async function generateWithLocal(text: string, tone: string) {
+  const LOCAL_MODEL_URL = process.env.LOCAL_MODEL_URL; // e.g. http://localhost:8080/generate
+
+  if (!LOCAL_MODEL_URL) {
+    throw new Error("LOCAL_MODEL_URL is required for MODEL_PROVIDER=local");
+  }
+
+  const prompt = `You generate SMS/iMessage replies. Return ONLY valid JSON with keys: short (array of 3 strings) and long (string). Do not include extra text.\nTone: ${tone}\nConversation:\n${text}`;
+
+  const resp = await fetch(LOCAL_MODEL_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      prompt,
+      max_new_tokens: 300,
+      temperature: 0.7
+    })
+  });
+
+  if (!resp.ok) {
+    const errText = await resp.text();
+    throw new Error(`Local model error: ${resp.status} ${errText}`);
+  }
+
+  const data = await resp.json();
+  const raw = data.generated_text ?? data.text ?? data.output ?? "";
+  return JSON.parse(raw);
+}
+
 function generateMock() {
   return {
     short: ["Sounds good", "Yep", "Let’s do it"],
@@ -103,9 +132,11 @@ app.post("/suggest", async (req, res) => {
     const provider = getProvider();
     const json = provider === "hf"
       ? await generateWithHuggingFace(text, tone)
-      : provider === "mock"
-        ? generateMock()
-        : await generateWithOpenAI(text, tone);
+      : provider === "local"
+        ? await generateWithLocal(text, tone)
+        : provider === "mock"
+          ? generateMock()
+          : await generateWithOpenAI(text, tone);
 
     const validated = ResponseSchema.safeParse(json);
     if (!validated.success) {
