@@ -13,7 +13,7 @@ const RequestSchema = z.object({
   tone: z.enum(["polite", "direct", "funny"]).default("polite")
 });
 
-const ResponseSchema = z.object({
+export const ResponseSchema = z.object({
   short: z.array(z.string()).min(3),
   long: z.string().min(1)
 });
@@ -74,6 +74,10 @@ async function generateWithHuggingFace(text: string, tone: string) {
 
   return JSON.parse(raw);
 }
+
+app.get("/health", (_req, res) => {
+  res.json({ status: "ok", provider: MODEL_PROVIDER });
+});
 
 app.post("/suggest", async (req, res) => {
   const parsed = RequestSchema.safeParse(req.body);
