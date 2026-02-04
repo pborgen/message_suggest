@@ -2,11 +2,16 @@ import express from "express";
 import OpenAI from "openai";
 import { z } from "zod";
 
-const app = express();
-app.use(express.json({ limit: "200kb" }));
+export function createApp() {
+  const app = express();
+  app.use(express.json({ limit: "200kb" }));
+  return app;
+}
+
+export const app = createApp();
 
 const PORT = process.env.PORT ? Number(process.env.PORT) : 3000;
-const MODEL_PROVIDER = (process.env.MODEL_PROVIDER || "openai").toLowerCase();
+const getProvider = () => (process.env.MODEL_PROVIDER || "openai").toLowerCase();
 
 const RequestSchema = z.object({
   text: z.string().min(1).max(8000),
@@ -75,8 +80,15 @@ async function generateWithHuggingFace(text: string, tone: string) {
   return JSON.parse(raw);
 }
 
+function generateMock() {
+  return {
+    short: ["Sounds good", "Yep", "Let’s do it"],
+    long: "Sounds good to me—let’s go with that plan."
+  };
+}
+
 app.get("/health", (_req, res) => {
-  res.json({ status: "ok", provider: MODEL_PROVIDER });
+  res.json({ status: "ok", provider: getProvider() });
 });
 
 app.post("/suggest", async (req, res) => {
@@ -88,9 +100,12 @@ app.post("/suggest", async (req, res) => {
   const { text, tone } = parsed.data;
 
   try {
-    const json = MODEL_PROVIDER === "hf"
+    const provider = getProvider();
+    const json = provider === "hf"
       ? await generateWithHuggingFace(text, tone)
-      : await generateWithOpenAI(text, tone);
+      : provider === "mock"
+        ? generateMock()
+        : await generateWithOpenAI(text, tone);
 
     const validated = ResponseSchema.safeParse(json);
     if (!validated.success) {
@@ -104,6 +119,8 @@ app.post("/suggest", async (req, res) => {
   }
 });
 
-app.listen(PORT, () => {
-  console.log(`message-suggest backend listening on :${PORT} (provider=${MODEL_PROVIDER})`);
-});
+if (process.env.NODE_ENV !== "test") {
+  app.listen(PORT, () => {
+    console.log(`message-suggest backend listening on :${PORT} (provider=${getProvider()})`);
+  });
+}
