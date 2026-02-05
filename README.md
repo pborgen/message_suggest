@@ -8,6 +8,9 @@ iMessage extension + backend for reply suggestions.
 - `apps/ios/` – iMessage extension code snippet (UIKit) + integration notes
 - `apps/sms-reply-starter/` – PyTorch training starter for reply generation
 
+## Training starter
+Start here: `apps/sms-reply-starter/README.md`
+
 ## Workspace (pnpm + turbo)
 ```bash
 pnpm install
