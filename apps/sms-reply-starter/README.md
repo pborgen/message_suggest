@@ -12,6 +12,12 @@ Example:
 {"input":"Can you pick up milk?","reply":"Yep, grabbing it now."}
 ```
 
+### Build dataset from SAMSum
+```bash
+python prepare_samsum.py
+```
+This downloads `Samsung/samsum` from Hugging Face and creates `data/train.jsonl` using adjacent turns in each conversation.
+
 ## Setup
 ```bash
 python -m venv .venv
