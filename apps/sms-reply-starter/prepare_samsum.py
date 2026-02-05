@@ -3,7 +3,11 @@ from datasets import load_dataset
 
 
 def main():
-    ds = load_dataset("Samsung/samsum")
+    # Try canonical and legacy dataset names
+    try:
+        ds = load_dataset("Samsung/samsum")
+    except Exception:
+        ds = load_dataset("samsum")
 
     # Use train split; optionally extend with validation if desired
     train = ds["train"]

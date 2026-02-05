@@ -5,4 +5,5 @@ node_modules
 **/.env
 **/.env.*
 services/local-model/models/
+apps/sms-reply-starter/output/
 .DS_Store
