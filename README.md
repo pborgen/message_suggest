@@ -6,6 +6,7 @@ iMessage extension + backend for reply suggestions.
 - `services/backend/` – Express server that calls OpenAI and returns JSON suggestions
 - `services/local-model/` – Local `/generate` endpoint stub for GPU inference
 - `apps/ios/` – iMessage extension code snippet (UIKit) + integration notes
+- `apps/sms-reply-starter/` – PyTorch training starter for reply generation
 
 ## Workspace (pnpm + turbo)
 ```bash
