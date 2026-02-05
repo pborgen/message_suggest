@@ -31,6 +31,7 @@ Set in `services/backend/.env`:
 ### Health + tests
 - `GET /health` returns status + provider
 - `pnpm --filter @message-suggest/backend test`
+- `RUN_LLAMA_TESTS=1 pnpm --filter @message-suggest/backend test -- integration-llamacpp.test.ts`
 
 ## iOS
 Open Xcode → New Project → App → include Messages Extension, then replace `MessagesViewController.swift` with the file in `apps/ios/`.

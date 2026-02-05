@@ -8,7 +8,8 @@
     "start": "node --env-file=.env dist/server.js",
     "build": "tsc",
     "lint": "eslint src --max-warnings=0",
-    "test": "vitest run"
+    "test": "vitest run --config vitest.config.ts",
+    "test:llamacpp": "vitest run --config vitest.config.ts src/integration-llamacpp.test.ts"
   },
   "dependencies": {
     "express": "^4.19.2",
